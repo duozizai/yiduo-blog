@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: blog
+  profiles:
+    active: #spring.profiles.active#
+  mvc:
+    favicon:
+      enabled: false
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: Asia/Shanghai
+    deserialization:
+      READ_DATE_TIMESTAMPS_AS_NANOSECONDS: false
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/blog
+    username: yanwen
+    password: 0416
+    driver-class-name: org.postgresql.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      filters: stat,counter
+      max-active: 20
+      stat-view-servlet:
+        login-username: yiye
+        login-password: sonic333
+  session:
+    store-type: redis
+    redis:
+      flush-mode: on_save
+      namespace: spring:session # Namespace for keys used to store sessions. # Redis server host.
+  redis:
+    host: localhost    # Redis server host.
+    password: 123456 # Login password of the redis server.
+    port: 6379 # Redis server port.
+    database: 0
+mybatis-plus:
+  type-enums-package: club.yiduo.blog.domain.enumerations
+  mapper-locations: classpath*:/mappers/*Mapper.xml
+  global-config:
+    db-config:
+      db-type: postgre_sql
+  type-handlers-package: club.yiduo.blog.typehanders
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 30m
+logging:
+  level:
+    club.yiduo.blog: info
+  path: /tmp/data/blog/log
