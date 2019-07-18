@@ -1,6 +1,7 @@
 package club.yiduo.blog.config;
 
 import club.yiduo.blog.auth.AuthenticationService;
+import club.yiduo.blog.auth.MyAuthenticationProvider;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -46,11 +47,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final SecurityLogoutHandler securityLogoutHandler;
 
+    private final MyAuthenticationProvider myAuthenticationProvider;
+
     @Autowired
-    public SecurityConfiguration(AuthenticationService authenticationService, SecurityExceptionHandler securityExceptionHandler,SecurityLogoutHandler securityLogoutHandler) {
+    public SecurityConfiguration(AuthenticationService authenticationService, SecurityExceptionHandler securityExceptionHandler,SecurityLogoutHandler securityLogoutHandler,MyAuthenticationProvider myAuthenticationProvider) {
         this.authenticationService = authenticationService;
         this.securityExceptionHandler = securityExceptionHandler;
         this.securityLogoutHandler = securityLogoutHandler;
+        this.myAuthenticationProvider = myAuthenticationProvider;
     }
 
     @Bean
@@ -61,7 +65,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
+        auth.authenticationProvider(myAuthenticationProvider)
                 .userDetailsService(authenticationService)
                 .passwordEncoder(new RawPasswordEncoder());
     }

@@ -6,12 +6,15 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -22,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author yanwen
  * @since 2019-07-12
  */
+@Slf4j
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
@@ -67,7 +71,14 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return AuthorityUtils.commaSeparatedStringToAuthorityList("");
+
+//        log.info("[原始用户角色列表装填]: ", roleList);
+//        StringBuilder roles = new StringBuilder();
+//
+//        List<GrantedAuthority> authorityList = AuthorityUtils.commaSeparatedStringToAuthorityList(roles.substring(0, roles.length() - 1));
+//        log.info("[遍历并返回用户的角色列表]: {}", authorityList);
+//        return authorityList;
     }
 
     @Override
