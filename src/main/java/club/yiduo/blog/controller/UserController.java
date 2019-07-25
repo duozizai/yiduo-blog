@@ -3,6 +3,10 @@ package club.yiduo.blog.controller;
 
 import club.yiduo.blog.domain.User;
 import club.yiduo.blog.service.UserService;
+import club.yiduo.blog.service.impl.UserServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/users")
-public class UserController  extends AbstractCrudController<UserService, User> {
+public class UserController  extends AbstractCrudController<UserServiceImpl, User> {
 
-    protected UserController(UserService service) {
+    protected UserController(UserServiceImpl service) {
         super(service);
     }
-
 }

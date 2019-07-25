@@ -3,6 +3,7 @@ package club.yiduo.blog.controller;
 
 import club.yiduo.blog.domain.Blog;
 import club.yiduo.blog.service.BlogService;
+import club.yiduo.blog.service.impl.BlogServiceImpl;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -17,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/blogs")
-public class BlogController extends AbstractCrudController<BlogService, Blog> {
+public class BlogController extends AbstractCrudController<BlogServiceImpl, Blog> {
 
-    protected BlogController(BlogService service) {
+    protected BlogController(BlogServiceImpl service) {
         super(service);
     }
 }

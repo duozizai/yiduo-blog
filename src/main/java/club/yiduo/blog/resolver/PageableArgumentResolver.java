@@ -1,4 +1,4 @@
-package com.liuceng.hat.web.controller.arg;
+package club.yiduo.blog.resolver;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

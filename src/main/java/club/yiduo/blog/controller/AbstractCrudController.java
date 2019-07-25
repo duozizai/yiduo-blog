@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
 public abstract  class AbstractCrudController <S extends IService<T>,T>{
 
  protected final S service;
