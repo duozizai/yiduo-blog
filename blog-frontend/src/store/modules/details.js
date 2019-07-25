@@ -8,10 +8,6 @@ const state = {
     swiperShow:false
 }
 
- 
-
-
-
 export default {
   namespaced: true,
   state,

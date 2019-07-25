@@ -1,44 +1,78 @@
 <template>
-  <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-  <el-menu-item index="/">首页</el-menu-item>
-  <el-submenu index="2">
-    <template slot="title">我的工作台</template>
-    <el-menu-item index="/index">index</el-menu-item>
-    <el-menu-item index="/index2">index2</el-menu-item>
-    <el-submenu index="2-4">
-      <template slot="title">选项4</template>
-      <el-menu-item index="2-4-1">选项1</el-menu-item>
-      <el-menu-item index="2-4-2">选项2</el-menu-item>
-      <el-menu-item index="2-4-3">选项3</el-menu-item>
+  <el-menu
+    :default-active="activeIndex"
+    class="el-menu-demo"
+    mode="horizontal"
+    @select="handleSelect"
+  >
+    <el-menu-item index="/">首页</el-menu-item>
+    <el-menu-item index="/blogs">我的文章列表</el-menu-item>
+    <el-menu-item index="/users">用户列表</el-menu-item>
+    <el-menu-item index="3">
+      <el-badge :value="12" class="item">消息中心</el-badge>
+    </el-menu-item>
+    <el-submenu style="float: right;">
+      <template style="float: right;" v-if="isShowUserDetail" slot="title">{{this.userDetail}}</template>
+      <el-menu-item>个人中心</el-menu-item>
     </el-submenu>
-  </el-submenu>
-  <el-menu-item index="3" disabled>消息中心</el-menu-item>
-  <el-menu-item index="/blog/me">我的文章列表</el-menu-item>
-</el-menu>
+  </el-menu>
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        activeIndex: '/'
-      };
+import { loginUserData } from "@/server/login.js";
+import { mapMutations } from "vuex";
+
+export default {
+  data() {
+    return {
+      activeIndex: "/",
+      user: {
+        username: "",
+        email: ""
+      },
+      isShowUserDetail: false,
+      userDetail: ""
+    };
+  },
+  created: function() {
+    this.getLoginUser();
+    this.initPath();
+  },
+  methods: {
+    handleSelect(key, keyPath) {
+      console.log(key, keyPath);
+      // if(key != null){
+      this.activeIndex = key;
+      this.$router.push({ path: key });
+      // }else{
+      //   this.activeIndex = this.activeIndex;
+      // }
     },
-    methods: {
-      handleSelect(key, keyPath) {
-        // console.log(key, keyPath);
-        this.$router.push({ path: key });
-      }
+    getLoginUser() {
+      loginUserData()
+        .then(data => {
+          this.user.username = data.username;
+          this.user.email = data.email;
+          this.isShowUserDetail = this.user.username === "" ? false : true;
+          this.userDetail = `用户名: ${this.user.username} email: ${this.user.email}`;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    initPath() {
+      this.activeIndex = this.$route.path;
     }
   }
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
- .header {
-            background-color: black;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
+.header {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
 </style>

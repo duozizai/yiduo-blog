@@ -4,9 +4,10 @@ import mutations from './auth/mutations';
 
 
 const state = {
-  logined: '',
+  token: '',
   showLoading:false,
-  prevUrl:'/'
+  prevUrl:'/',
+  isLogin: false
 }
 
  

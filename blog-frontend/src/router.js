@@ -2,8 +2,9 @@ import Vue from 'vue'
 import routerCenter from 'vue-router'
 import Layout from '@/views/layout/Layout'
 import Login from '@/views/index/login'
+import Vuex from 'vuex';
 Vue.use(routerCenter)
-
+Vue.use(Vuex)
 const Router = new routerCenter({
   routes: [
     {
@@ -23,25 +24,47 @@ const Router = new routerCenter({
       path: '/login',
       name: 'login',
       component: Login
-    }
+    }, {
+      path: '/users',
+      name: 'user',
+      title:'user',
+      component: Layout,
+      children: [
+        {
+          path: '/users',
+          name: 'User',
+          component: () => import('@/views/user/index')
+        }
+      ]
+    }, {
+      path: '/blogs',
+      name: 'blog',
+      title:'blog',
+      component: Layout,
+      children: [
+        {
+          path: '/blogs',
+          name: 'Blog',
+          component: () => import('@/views/blog/index')
+        }
+      ]
+    },
   ]
 });
 // 判断是否需要登录权限 以及是否登录
-// Router.beforeEach((to, from, next) => {
-//   store.commit('auth/setPrevUrl',from.fullPath);
-// 	if (to.matched.some(res => res.meta.requireAuth)) {
-// 		if (VueCookies.isKey("user_session")) {
-// 			next()
-// 		} else {
-//       Toast('请先登陆...');
-// 			next({
-// 				path: '/login',
-// 				query: {backUrl: to.fullPath}
-// 			})
-// 		}
-// 	} else {
-// 		next()
-// 	}
-// });
+Router.beforeEach((to, from, next) => {
+  // store.commit('auth/setPrevUrl',from.fullPath);
+  const token = localStorage.getItem('token');
+	if(to.path !== '/login'){
+      //获取当前用户会话
+      if(token === undefined){
+        this.$route.push('/')
+      }else{
+        next(true)
+      }
+  }else{
+    next(true)
+  }
+});
 
 export default Router

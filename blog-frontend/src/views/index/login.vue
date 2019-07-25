@@ -1,27 +1,34 @@
 <template>
+    
     <div>
+      <Message/>
+      <div class="login-form">
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-  <el-form-item label="用户名" prop="username">
-    <el-input v-model="ruleForm.username" autocomplete="off"></el-input>
-  </el-form-item>
-  <el-form-item label="密码" prop="password">
-    <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
-  </el-form-item>
-  
-  <el-form-item>
-    <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-    <el-button type="primary" @click="resetForm('ruleForm')">注册</el-button>
-  </el-form-item>
-</el-form>
+        <el-form-item label="用户名" prop="username">
+        <el-input v-model="ruleForm.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+        <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
+        </el-form-item>
 
+        <el-form-item>
+        <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
+        <el-button type="primary" @click="resetForm('ruleForm')">注册</el-button>
+        </el-form-item>
+        </el-form>
+      </div>
     </div>
-
 </template>
 
 <script>
 import { loginData } from '@/server/login.js';
+import Message from '@/components/message/alert'
 import { mapMutations } from 'vuex';
+
 export default {
+   components: {
+     Message
+   },
   data() {
     return {
       ruleForm: {
@@ -44,6 +51,9 @@ export default {
     ...mapMutations('auth',[
             'setLogined'
         ]),
+    ...mapMutations('message',[
+        'setMessage'
+    ]),
     submitForm(formName) {
       const $this = this
       this.$refs[formName].validate((valid) => {
@@ -54,20 +64,23 @@ export default {
               email: $this.ruleForm.username,
               password: $this.ruleForm.password
           });
-          console.log(_data)
-          console.log(_data.PromiseValue)
           _data.then(res => {
             if(res.status){
-              // this.$toast('登陆成功');
-              // $this.setLogined(res.data.token);
-              // $this.$cookies.set("user_session",res.data.token)
-              const _backUrl = this.$route.query.backUrl?this.$route.query.backUrl:'/index';
-              $this.$router.push(`${_backUrl}`);
+              //设置 token
+              localStorage.setItem('token',res.data.token)
+              $this.setLogined(res.data.token);
+              //设置用户信息
+              const _backUrl = this.$route.query.backUrl?this.$route.query.backUrl:'/';
+              console.log(`登陆成功 跳转到 ${_backUrl}`)
+              this.$router.push({path: `${_backUrl}`});
             }else{
-                // this.$toast(_data.message);
+             this.setMessage({status:true,title:"服务器错误",type:"error"});
             };
-          });
-         
+          }).catch( err => {
+            console.log(err)
+            this.setMessage({status:true,title:"服务器错误",type:"error"});
+            console.log(this.$store.state.message)
+          }) ;
         } else {
           return false;
         }
@@ -83,5 +96,13 @@ export default {
 <style>
     div .title{
         font-size: 30px;
+    }
+    .login-form {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 400px;
+      margin-left: -200px;
+      margin-top: -94px;
     }
 </style>

@@ -1,7 +1,7 @@
 // mutations
 export default {
-    setLogined (state, status) {
-        state.logined = status
+    setLogined (state,token) {
+        state.token = token
     },
     showLoad (state, status) {
         state.showLoading = status

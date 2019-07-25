@@ -4,6 +4,7 @@ import auth from './modules/auth';
 import indexItem from './modules/indexItem';
 import category from './modules/category';
 import details from './modules/details';
+import message from './modules/message';
 
 Vue.use(Vuex)
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
     auth,
     indexItem,
     category,
-    details
+    details,
+    message
   }
 })
