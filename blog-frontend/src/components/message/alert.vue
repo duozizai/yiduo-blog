@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       status: this.$store.state.message.status,
-      type: this.$stßore.state.message.type,
+      type: this.$store.state.message.type,
       title: this.$store.state.message.title
     };
   }

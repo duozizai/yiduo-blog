@@ -70,7 +70,7 @@ export default {
               localStorage.setItem('token',res.data.token)
               $this.setLogined(res.data.token);
               //设置用户信息
-              const _backUrl = this.$route.query.backUrl?this.$route.query.backUrl:'/';
+              const _backUrl = this.$route.query.backUrl ? this.$route.query.backUrl : '/';
               console.log(`登陆成功 跳转到 ${_backUrl}`)
               this.$router.push({path: `${_backUrl}`});
             }else{

@@ -7,6 +7,7 @@ import QS from 'qs';
 import router from '@/router';
 import store from '@/store'
 import { Message } from 'element-ui';
+
 // 请求超时时间
 axios.defaults.timeout = 10000;
 // post请求头
@@ -34,7 +35,6 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     response => {
         if (response.data.code == 401) {//未登录
-            console.log(`需要跳转到 /login`)
             router.push({
                 path: '/login',
                 query: { backUrl: router.history.current.fullPath }
@@ -48,7 +48,6 @@ axios.interceptors.response.use(
         console.log(`error response status: ${error.response.status}`)
         if (error.response.status === 401) { //未登录
             if (error.response.data.message !== '用户名或密码错误') {
-                console.log(`需要跳转到 /login`)
                 router.push({
                     path: '/login',
                     query: { backUrl: router.history.current.fullPath }
@@ -83,7 +82,7 @@ axios.interceptors.response.use(
  */
 export function get(url, params) {
     return new Promise((resolve, reject) => {
-        axios.get(url, { params: params })
+        axios.get(`/api${url}`, { params: params })
             .then(res => {
                 resolve(res.data);
             })
@@ -99,9 +98,8 @@ export function get(url, params) {
  * @param {Object} params [请求时携带的参数] 
  */
 export function post(url, params) {
-    console.log(`post ${url} params ${params}`)
     return new Promise((resolve, reject) => {
-        axios.post(url, QS.stringify(params))
+        axios.post(`/api${url}`, QS.stringify(params))
             .then(res => {
                 resolve(res.data);
             })

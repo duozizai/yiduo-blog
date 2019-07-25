@@ -34,6 +34,10 @@ const Router = new routerCenter({
           path: '/users',
           name: 'User',
           component: () => import('@/views/user/index')
+        },{
+          path: '/users/:id',
+          name: 'User',
+          component: () => import('@/views/user/detail')
         }
       ]
     }, {
