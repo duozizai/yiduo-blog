@@ -202,14 +202,24 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         }
     }
 
+    /**
+     * 该filter 与 formLogin()
+     *                         .loginProcessingUrl("/auth/login")
+     *                         .usernameParameter("email").passwordParameter("password")
+     *                         .successHandler(securityAuthenticationSuccessHandler)
+     *                         .failureHandler(securityExceptionHandler)
+     *                         冲突  .loginProcessingUrl("/auth/login")
+     * @return
+     * @throws Exception
+     */
     CustomAuthenticationFilter getAuthenticationFilter() throws Exception{
         CustomAuthenticationFilter myUsernamePasswordAuthenticationFilte = new CustomAuthenticationFilter();
-        myUsernamePasswordAuthenticationFilte.setFilterProcessesUrl("/auth/login");
+        myUsernamePasswordAuthenticationFilte.setFilterProcessesUrl("/auth/login");//必须写 不然与formLogin().loginProcessingUrl("/auth/login") 冲突
         myUsernamePasswordAuthenticationFilte.setAuthenticationSuccessHandler(securityAuthenticationSuccessHandler);
         myUsernamePasswordAuthenticationFilte.setAuthenticationFailureHandler(securityExceptionHandler);
         myUsernamePasswordAuthenticationFilte.setAuthenticationManager(authenticationManagerBean());
         return myUsernamePasswordAuthenticationFilte;
-    }
+    } 
 
     @Component
     public static class SecurityAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
