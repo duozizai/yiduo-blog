@@ -1,8 +1,16 @@
 <template>
 <div>
+
+  <el-carousel indicator-position="outside">
+    <el-carousel-item v-for="item in 4" :key="item">
+      <h3>{{ item }}</h3>
+    </el-carousel-item>
+  </el-carousel>
+  <!--  分割线 -->
+  <el-divider></el-divider>
   <!-- 卡片 -->
   <el-row >
-    <el-col :span="5" v-for="(o, index) in this.page.rows" :key="o" :offset="index > 0 ? 1 : 0" style="margin-left: 3px">
+    <el-col :span="8" v-for="(o, index) in this.page.rows" :key="o" :offset="index > 0 ? index : 0" style="margin-left: 3px">
       <el-card :body-style="{ padding: '4px' }">
         <img src="" class="image">
         <div style="padding: 14px;">
@@ -15,9 +23,9 @@
       </el-card>
     </el-col>
   </el-row>
-  
+
    <!-- 分页 -->
-<el-pagination class="div-main"
+<el-pagination v-if="!isShow" class="div-main"
         background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -30,12 +38,75 @@
 </div>
 </template>
 
+<script>
+import { blogList,usersList } from '@/server/login.js';
+export default {
+  data() {
+    return {
+      currentDate: new Date(),
+      page:{
+          total: 0,
+          pageNumber: 1,
+          pageSize: 2,
+          totalPages: 0,
+          rows:[]
+       }
+    }
+  },created: function () {
+    //查询 users
+     const currentPage =  {pageNumber: this.page.pageNumber, pageSize: this.page.pageSize,order: this.order,
+            sort: this.sort}
+      this.initBlog(currentPage)
+  },methods:{
+    isShow(){
+      return this.page.pageNumber == 1 && !this.page.rows.length > 0 ;
+    },
+    initBlog(currentPage){
+      blogList(currentPage)
+      .then(data => {
+        this.page = data
+        console.log(data)
+      })
+    },
+    handleSizeChange(val) {
+      this.page.pageSize = val;
+      const currentPage =  {pageNumber:this.page.pageNumber, pageSize: this.page.pageSize}
+      this.initBlog(currentPage)
+    },
+    handleCurrentChange(val) {
+      this.page.pageNumber = val;
+      const currentPage =
+      {
+        pageNumber:this.page.pageNumber,
+        pageSize: this.page.pageSize,
+        }
+      this.initBlog(currentPage)
+    }
+  }
+}
+  </script>
 <style>
+  .el-carousel__item h3 {
+    color: #475669;
+    font-size: 18px;
+    opacity: 0.75;
+    line-height: 300px;
+    margin: 0;
+  }
+
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
+
   .time {
     font-size: 13px;
     color: #999;
   }
-  
+
   .bottom {
     margin-top: 13px;
     line-height: 12px;
@@ -53,61 +124,15 @@
 
   .clearfix:before,
   .clearfix:after {
-      display: table;
-      content: "";
+    display: table;
+    content: "";
   }
-  
+
   .clearfix:after {
-      clear: both
+    clear: both
   }
   .div-main{
     float:right;
     margin: 10px;
   }
 </style>
-<script>
-import { blogList,usersList } from '@/server/login.js';
-export default {
-  data() {
-    return {
-      currentDate: new Date(),
-      page:{
-          total: 0,
-          pageNumber: 1,
-          pageSize: 20,
-          totalPages: 0,
-          rows:[]
-       }
-    }
-  },created: function () {
-    //查询 users
-     const currentPage =  {pageNumber: this.page.pageNumber, pageSize: this.page.pageSize,order: this.order,
-            sort: this.sort}
-      this.initBlog(currentPage)
-  },methods:{
-    initBlog(currentPage){
-      usersList(currentPage)
-      .then(data => {
-        this.page = data
-        console.log(this.page)
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    handleSizeChange(val) {
-      this.page.pageSize = val;
-      const currentPage =  {pageNumber:this.page.pageNumber, pageSize: this.page.pageSize}
-      this.initBlog(currentPage)
-    },
-    handleCurrentChange(val) {
-      this.page.pageNumber = val;
-      const currentPage =  
-      {
-        pageNumber:this.page.pageNumber,
-        pageSize: this.page.pageSize,
-        }
-      this.initBlog(currentPage)
-    }
-  }
-}
-  </script>

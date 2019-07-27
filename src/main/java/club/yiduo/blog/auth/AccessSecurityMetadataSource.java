@@ -49,7 +49,7 @@ public class AccessSecurityMetadataSource implements FilterInvocationSecurityMet
 	@PostConstruct
 	private void loadResourceDefine() {
 		permissionMap = new LinkedHashMap<>();
-		
+
 		// 需要鉴权的url资源，@needAuth标志
 //		List<SysPermissionDO> permissionList = authPermissionMapper.queryRolePermission();
 //		for (SysPermissionDO permission : permissionList) {

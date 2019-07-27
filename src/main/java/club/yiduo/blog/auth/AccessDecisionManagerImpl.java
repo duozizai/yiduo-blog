@@ -26,10 +26,10 @@ public class AccessDecisionManagerImpl implements AccessDecisionManager {
 	@Override
 	public void decide(Authentication authentication, Object object, Collection<ConfigAttribute> configAttributes)
 			throws AccessDeniedException, InsufficientAuthenticationException {
-			
+
 		log.info("[资源权限]: {}", configAttributes);
 		log.info("[用户权限]: {}", authentication.getAuthorities());
-		
+
 		Iterator<ConfigAttribute> it = configAttributes.iterator();
 		while (it.hasNext()) {
 			// 资源的权限
@@ -46,7 +46,7 @@ public class AccessDecisionManagerImpl implements AccessDecisionManager {
 		}
 //		throw new AccessDeniedException("权限不足");
 	}
-	
+
 	/**
 	 * 被AbstractSecurityInterceptor调用，遍历ConfigAttribute集合，筛选出不支持的attribute
 	 */

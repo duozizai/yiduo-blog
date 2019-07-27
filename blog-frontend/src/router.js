@@ -2,6 +2,7 @@ import Vue from 'vue'
 import routerCenter from 'vue-router'
 import Layout from '@/views/layout/Layout'
 import Login from '@/views/index/login'
+import Signup from '@/views/index/signup'
 import Vuex from 'vuex';
 Vue.use(routerCenter)
 Vue.use(Vuex)
@@ -24,6 +25,10 @@ const Router = new routerCenter({
       path: '/login',
       name: 'login',
       component: Login
+    },{
+      path: '/singup',
+      name: 'singup',
+      component: Signup
     }, {
       path: '/users',
       name: 'user',
@@ -50,6 +55,11 @@ const Router = new routerCenter({
           path: '/blogs',
           name: 'Blog',
           component: () => import('@/views/blog/index')
+        },
+        {
+          path: '/blogs/add',
+          name: 'Blog',
+          component: () => import('@/views/blog/add')
         }
       ]
     },

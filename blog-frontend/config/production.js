@@ -1,4 +1,6 @@
-module.exports = {
-    port:8888,
-    proxy_v1:'http://39.108.81.245:8887/'
-}
+'use strict'
+const merge = require('webpack-merge')
+const dev_config = require('./dev.js');
+module.exports = merge(dev_config,{
+    runtimeCompiler: false
+})

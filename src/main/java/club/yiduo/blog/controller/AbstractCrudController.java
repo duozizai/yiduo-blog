@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public abstract  class AbstractCrudController <S extends IService<T>,T>{
@@ -30,8 +31,7 @@ public abstract  class AbstractCrudController <S extends IService<T>,T>{
   return service.getById(id);
  }
 
- @PostMapping
- public void saveOrUpdate(@RequestBody T t) {
+ public void saveOrUpdate(@Valid @RequestBody T t) {
   service.saveOrUpdate(t);
  }
 

@@ -1,6 +1,7 @@
 <template>
 
     <div class="block">
+        <el-button type="primary" @click="add">添加</el-button>
         <!-- 列表 -->
     <el-table
       :data="page.rows"
@@ -11,13 +12,8 @@
         width="180">
       </el-table-column>
       <el-table-column
-        prop="email"
-        label="登陆邮箱"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="phone"
-        label="联系人电话"
+        prop="title"
+        label="标题"
         width="180">
       </el-table-column>
       <el-table-column
@@ -28,36 +24,66 @@
     <!-- 分页 -->
     <el-pagination
         background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
         layout="prev, pager, next"
-        :total="this.page.total">
+        :page-size="page.pageSize"
+        :current-page="page.pageNumber"
+        :total="page.total">
     </el-pagination>
     </div>
 </template>
 
 <script>
-    import { blogList,usersList } from '@/server/login.js';
+    import { blogList } from '@/server/login.js';
     export default {
       data() {
         return {
           page:{
             total: 0,
             pageNumber: 1,
-            pageSize: 20,
+            pageSize: 10,
             totalPages: 0,
             rows:[]
-          }
+          },
+            sort: "createdAt",
+            order: "desc"
         }
       },created: function () {
         //查询 users
-        this.initBlog()
+        const currentPage =  {pageNumber: this.page.pageNumber, pageSize: this.page.pageSize,order: this.order,
+            sort: this.sort}
+        this.initBlog(currentPage)
       },methods:{
-        initBlog(){
-          //
-          usersList().then(data => {
+        initBlog(currentPage){
+          blogList(currentPage).then(data => {
            this.page = data
-          }).catch(err => {
-              console.log(err)
           })
+        },
+        add(){
+            //跳转到添加页面
+            this.$router.push({path: '/blogs/add'});
+        },
+        handleCurrentChange(val) {
+            this.page.pageNumber = val;
+            const currentPage = {
+                pageNumber: this.page.pageNumber,
+                pageSize: this.page.pageSize,
+                order: this.order,
+                sort: this.sort
+            };
+            this.initBlog(currentPage);
+        },
+        handleSortChange(val) {
+            this.sort = val.prop;
+            this.order = val.order === "descending" ? "desc" : "asc";
+            const currentPage = {
+                pageNumber: this.page.pageNumber,
+                pageSize: this.page.pageSize,
+                order: this.order,
+                sort: this.sort
+            };
+            this.initBlog(currentPage);
         }
       }
     }

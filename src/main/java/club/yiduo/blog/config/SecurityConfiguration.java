@@ -1,6 +1,7 @@
 package club.yiduo.blog.config;
 
 import club.yiduo.blog.auth.AuthenticationService;
+import club.yiduo.blog.auth.CustomAuthenticationFilter;
 import club.yiduo.blog.auth.MyAuthenticationProvider;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.stereotype.Component;
@@ -47,15 +50,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final SecurityLogoutHandler securityLogoutHandler;
 
+    private final SecurityAuthenticationSuccessHandler securityAuthenticationSuccessHandler;
+
     private final MyAuthenticationProvider myAuthenticationProvider;
 
     @Autowired
-    public SecurityConfiguration(AuthenticationService authenticationService, SecurityExceptionHandler securityExceptionHandler,SecurityLogoutHandler securityLogoutHandler,MyAuthenticationProvider myAuthenticationProvider) {
+    public SecurityConfiguration(AuthenticationService authenticationService, SecurityExceptionHandler securityExceptionHandler, SecurityLogoutHandler securityLogoutHandler, MyAuthenticationProvider myAuthenticationProvider,SecurityAuthenticationSuccessHandler securityAuthenticationSuccessHandler) {
         this.authenticationService = authenticationService;
         this.securityExceptionHandler = securityExceptionHandler;
         this.securityLogoutHandler = securityLogoutHandler;
         this.myAuthenticationProvider = myAuthenticationProvider;
+        this.securityAuthenticationSuccessHandler = securityAuthenticationSuccessHandler;
     }
+//    @Autowired
+//    public SecurityConfiguration(AuthenticationService authenticationService, SecurityExceptionHandler securityExceptionHandler, SecurityLogoutHandler securityLogoutHandler,SecurityAuthenticationSuccessHandler securityAuthenticationSuccessHandler) {
+//        this.authenticationService = authenticationService;
+//        this.securityExceptionHandler = securityExceptionHandler;
+//        this.securityLogoutHandler = securityLogoutHandler;
+//        this.securityAuthenticationSuccessHandler =securityAuthenticationSuccessHandler;
+//    }
 
     @Bean
     public HeaderHttpSessionIdResolver headerHttpSessionIdResolver() {
@@ -68,6 +81,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(myAuthenticationProvider)
                 .userDetailsService(authenticationService)
                 .passwordEncoder(new RawPasswordEncoder());
+//        auth
+//                .userDetailsService(authenticationService)
+//                .passwordEncoder(new RawPasswordEncoder());
     }
 
     @Override
@@ -75,50 +91,45 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         web
                 .ignoring()
                 .antMatchers(HttpMethod.OPTIONS);
+//        .antMatchers(HttpMethod.POST,"/auth/singup");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors()
+        http.cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/signup","/auth/login").permitAll()
-                .antMatchers("/auth/login", "/auth/logout")
-                .permitAll()
-                .anyRequest().authenticated()
-                .and()
+                .antMatchers("/auth/signup", "/auth/login").permitAll()
+                .antMatchers("/**").authenticated()
+            .and()
                 .formLogin()
                 .loginProcessingUrl("/auth/login")
                 .usernameParameter("email").passwordParameter("password")
-                .successHandler((request, response, authentication) -> {
-                    JSONObject result = new JSONObject();
-                    result.put("status", true);
-                    Map<String, String> token = new HashMap<>();
-                    token.put("token", request.getSession().getId());
-                    result.put("data", token);
-                    response.getWriter().write(result.toJSONString());
-                })
+                .successHandler(securityAuthenticationSuccessHandler)
                 .failureHandler(securityExceptionHandler)
                 .permitAll()
-                .and()
+
+            .and()
                 .logout()
                 .logoutUrl("/auth/logout")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .logoutSuccessHandler(securityLogoutHandler)
                 .permitAll()
-                .and()
+            .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(securityExceptionHandler)
                 .accessDeniedHandler(securityExceptionHandler)
-                .and()
+            .and()
                 .headers()
                 .frameOptions()
                 .disable()
-                .and()
+            .and()
                 .csrf()
                 .disable();
+        http.addFilterAt(getAuthenticationFilter(),
+            UsernamePasswordAuthenticationFilter.class);
+
     }
 
     @Override
@@ -155,7 +166,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
             JSONObject result = new JSONObject();
             result.put("status", false);
-            result.put("code",HttpStatus.UNAUTHORIZED.value());
+            result.put("code", HttpStatus.UNAUTHORIZED.value());
             result.put("message", "用户名或密码错误");
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -166,7 +177,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
             JSONObject result = new JSONObject();
             result.put("status", false);
-            result.put("code",HttpStatus.UNAUTHORIZED.value());
+            result.put("code", HttpStatus.UNAUTHORIZED.value());
             result.put("message", "未登录系统，暂无权限访问");
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -188,6 +199,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             result.put("status", true);
             result.put("message", "logout");
             httpServletResponse.getWriter().write(result.toJSONString());
+        }
+    }
+
+    CustomAuthenticationFilter getAuthenticationFilter() throws Exception{
+        CustomAuthenticationFilter myUsernamePasswordAuthenticationFilte = new CustomAuthenticationFilter();
+        myUsernamePasswordAuthenticationFilte.setFilterProcessesUrl("/auth/login");
+        myUsernamePasswordAuthenticationFilte.setAuthenticationSuccessHandler(securityAuthenticationSuccessHandler);
+        myUsernamePasswordAuthenticationFilte.setAuthenticationFailureHandler(securityExceptionHandler);
+        myUsernamePasswordAuthenticationFilte.setAuthenticationManager(authenticationManagerBean());
+        return myUsernamePasswordAuthenticationFilte;
+    }
+
+    @Component
+    public static class SecurityAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+        @Override
+        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+            JSONObject result = new JSONObject();
+            result.put("status", true);
+            Map<String, String> token = new HashMap<>();
+            token.put("token", request.getSession().getId());
+            result.put("data", token);
+            response.getWriter().write(result.toJSONString());
         }
     }
 }

@@ -12,4 +12,5 @@ if(env=='production'){
 }else{
     config = dev_config;
 };
+console.log(dev_config)
 module.exports = config

@@ -7,11 +7,10 @@ import QS from 'qs';
 import router from '@/router';
 import store from '@/store'
 import { Message } from 'element-ui';
-
 // 请求超时时间
 axios.defaults.timeout = 10000;
 // post请求头
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 // 请求拦截器
 axios.interceptors.request.use(
     config => {
@@ -21,7 +20,7 @@ axios.interceptors.request.use(
         if (token) {
             config.headers = {
                 'Authorization': token,
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                'Content-Type': 'application/json;charset=UTF-8'
             }
         }
         store.commit('auth/showLoad', true);
@@ -45,12 +44,11 @@ axios.interceptors.response.use(
         return Promise.resolve(response);
     },
     error => {
-        console.log(`error response status: ${error.response.status}`)
         if (error.response.status === 401) { //未登录
             if (error.response.data.message !== '用户名或密码错误') {
                 router.push({
                     path: '/login',
-                    query: { backUrl: router.history.current.fullPath }
+                    query: { backUrl: router.history.current.query.backUrl != undefined ? router.history.current.query.backUrl : router.history.current.fullPath }
                 });
                 store.commit('auth/setLogined', false);
             } else {
@@ -72,13 +70,17 @@ axios.interceptors.response.use(
                 message: `${error.response.data}`
             });
         }
+        Message({
+            type: 'error',
+            message: `status ${error.response.status} data ${JSON.stringify(error.response.data)}`
+        });
         return Promise.reject(error.response);
     }
 );
-/** 
- * get方法，对应get请求 
- * @param {String} url [请求的url地址] 
- * @param {Object} params [请求时携带的参数] 
+/**
+ * get方法，对应get请求
+ * @param {String} url [请求的url地址]
+ * @param {Object} params [请求时携带的参数]
  */
 export function get(url, params) {
     return new Promise((resolve, reject) => {
@@ -87,24 +89,24 @@ export function get(url, params) {
                 resolve(res.data);
             })
             .catch(err => {
-                // Toast('响应异常');       
+                // Toast('响应异常');
                 reject(err)
             })
     });
 }
-/** 
- * post方法，对应post请求 
- * @param {String} url [请求的url地址] 
- * @param {Object} params [请求时携带的参数] 
+/**
+ * post方法，对应post请求
+ * @param {String} url [请求的url地址]
+ * @param {Object} params [请求时携带的参数]
  */
 export function post(url, params) {
     return new Promise((resolve, reject) => {
-        axios.post(`/api${url}`, QS.stringify(params))
+        axios.post(`/api${url}`, JSON.stringify(params))
             .then(res => {
                 resolve(res.data);
             })
             .catch(err => {
-                // Toast('响应异常');           
+                // Toast('响应异常');
                 reject(err)
             })
     });

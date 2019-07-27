@@ -71,7 +71,7 @@ public class AccessSecurityInterceptor extends AbstractSecurityInterceptor imple
 	public Class<?> getSecureObjectClass() {
 		return FilterInvocation.class;
 	}
-	
+
 	@Override
 	public void init(FilterConfig filterConfig) {
 	}

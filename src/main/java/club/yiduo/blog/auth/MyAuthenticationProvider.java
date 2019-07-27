@@ -49,7 +49,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
     if (userDetails == null) {
       throw new BadCredentialsException("用户名未找到");
     }
-    if(StringUtils.equals(userDetails.getPassword(),password)){
+    if(!StringUtils.equals(userDetails.getPassword(),password)){
       throw new BadCredentialsException("密码不正确");
     }
 
