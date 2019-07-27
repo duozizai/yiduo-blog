@@ -219,7 +219,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         myUsernamePasswordAuthenticationFilte.setAuthenticationFailureHandler(securityExceptionHandler);
         myUsernamePasswordAuthenticationFilte.setAuthenticationManager(authenticationManagerBean());
         return myUsernamePasswordAuthenticationFilte;
-    } 
+    }
 
     @Component
     public static class SecurityAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
