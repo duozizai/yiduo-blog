@@ -3,8 +3,8 @@ package club.yiduo.blog.controller;
 
 import club.yiduo.blog.domain.Blog;
 import club.yiduo.blog.domain.User;
-import club.yiduo.blog.service.BlogService;
 import club.yiduo.blog.service.impl.BlogServiceImpl;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +24,9 @@ import java.time.LocalDateTime;
  * @since 2019-07-12
  */
 @RestController
-@RequestMapping("/blogs")
+@RequestMapping(value = "/blogs",produces = {
+        MediaType.APPLICATION_JSON_UTF8_VALUE
+})
 public class BlogController extends AbstractCrudController<BlogServiceImpl, Blog> {
 
     protected BlogController(BlogServiceImpl service) {

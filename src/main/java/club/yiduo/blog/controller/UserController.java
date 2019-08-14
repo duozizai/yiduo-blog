@@ -7,6 +7,7 @@ import club.yiduo.blog.service.impl.UserServiceImpl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2019-07-12
  */
 @RestController
-@RequestMapping("/users")
+@RequestMapping(value = "/users",produces = {
+        MediaType.APPLICATION_JSON_UTF8_VALUE
+})
 public class UserController  extends AbstractCrudController<UserServiceImpl, User> {
 
     protected UserController(UserServiceImpl service) {

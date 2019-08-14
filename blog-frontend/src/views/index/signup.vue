@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { loginData,signupData } from '@/server/login.js';
+import { signupData } from '@/server/login.js';
 import { mapMutations } from 'vuex';
 export default {
   data() {
@@ -75,12 +75,11 @@ export default {
         'setMessage'
     ]),
     submitForm(formName) {
-      const $this = this
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 发送post 请求
           const _data = signupData(this.ruleForm);
-          _data.then(res => {
+          _data.then(() => {
               //返回登录页面
               const _backUrl = this.$route.query.backUrl ? this.$route.query.backUrl : '/';
             this.$message({

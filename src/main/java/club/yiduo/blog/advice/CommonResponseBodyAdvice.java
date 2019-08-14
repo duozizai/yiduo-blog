@@ -15,7 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.List;
 
-@RestControllerAdvice(assignableTypes = {UserController.class, BlogController.class})
+//@RestControllerAdvice(assignableTypes = {UserController.class, BlogController.class})
+@RestControllerAdvice
 public class CommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
