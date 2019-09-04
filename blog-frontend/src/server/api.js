@@ -2,11 +2,11 @@
  * 请求拦截、相应拦截、错误统一处理
  */
 import axios from 'axios';
-import QS from 'qs';
-// import { Toast } from 'mint-ui';
 import router from '@/router';
 import store from '@/store'
 import { Message } from 'element-ui';
+
+axios.defaults.baseURL = `${process.env.VUE_APP_API_URL}`;
 // 请求超时时间
 axios.defaults.timeout = 10000;
 // post请求头
@@ -15,7 +15,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 axios.interceptors.request.use(
     config => {
         config.withCredentials = true // 允许携带token ,这个是解决跨域产生的相关问题
-        config.timeout = 6000
+        config.timeout = 10000
         let token = localStorage.getItem('token')
         if (token) {
             config.headers = {
@@ -84,7 +84,7 @@ axios.interceptors.response.use(
  */
 export function get(url, params) {
     return new Promise((resolve, reject) => {
-        axios.get(`/api${url}`, { params: params })
+        axios.get(`${url}`, { params: params })
             .then(res => {
                 resolve(res.data);
             })
@@ -101,7 +101,7 @@ export function get(url, params) {
  */
 export function post(url, params) {
     return new Promise((resolve, reject) => {
-        axios.post(`/api${url}`, JSON.stringify(params))
+        axios.post(`${url}`, JSON.stringify(params))
             .then(res => {
                 resolve(res.data);
             })

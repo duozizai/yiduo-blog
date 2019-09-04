@@ -12,7 +12,7 @@ module.exports = {
                 ws: true, //是否跨域
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/api': '/'
+                    '^/api': ''
                 }
             }
         }

@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://172.16.102.118:5432/blog
+    username: postgresuser
+    password: sonic333
+    driver-class-name: org.postgresql.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      filters: stat,counter
+      max-active: 20
+      stat-view-servlet:
+        login-username: yiye
+        login-password: sonic333
+  session:
+    store-type: redis
+    redis:
+      flush-mode: on_save
+      namespace: spring:session # Namespace for keys used to store sessions. # Redis server host.
+  redis:
+    host: 172.16.102.118    # Redis server host.
+    password: 123456 # Login password of the redis server.
+    port: 9999 # Redis server port.
+    database: 0

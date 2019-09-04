@@ -1,0 +1,14 @@
+version: '3'
+services:
+    redis:
+        image: redis:4.0.11-alpine
+        container_name: redis
+        volumes:
+        - ~/volumes/redis/data/:/data
+        command: redis-server --requirepass 123456 --appendonly yes
+        ports:
+        - 9999:6379
+        networks:
+        - redis
+networks:
+    redis:

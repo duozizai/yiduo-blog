@@ -151,15 +151,15 @@
             </activation>
             <properties>
                 <spring.profiles.active>dev</spring.profiles.active>
-                <docker.repository>registry.cn-hangzhou.aliyuncs.com/yiduo-dev/${project.artifactId}</docker.repository>
+                <docker.repository>registry.cn-beijing.aliyuncs.com/yiduo-dev/${project.artifactId}</docker.repository>
                 <docker.tag>dev</docker.tag>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <spring.profiles.active>test</spring.profiles.active>
-                <docker.repository>registry.cn-hangzhou.aliyuncs.com/yiduo-prod/${project.artifactId}</docker.repository>
+                <spring.profiles.active>prod</spring.profiles.active>
+                <docker.repository>registry.cn-beijing.aliyuncs.com/yiduo-prod/${project.artifactId}</docker.repository>
                 <docker.tag>${project.version}</docker.tag>
             </properties>
         </profile>
